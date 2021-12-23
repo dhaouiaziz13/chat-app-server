@@ -37,7 +37,7 @@ exports.Login = async (req, res) => {
     let checkpass = crypt.compareSync(password, checkuser.password);
     if (checkpass) {
       let token = jwt.sign({ payload: checkuser }, process.env.KEY, {
-        expiresIn: "30d",
+        expiresIn: "1m",
       });
       const createsession = new Session({
         email: checkuser.email,
@@ -65,7 +65,7 @@ exports.Signup = async (req, res) => {
   const { email, username, password } = req.body;
   const checkuser = await User.findOne({ email });
   if (checkuser) {
-    return res.status(200).json(checkuser);
+    return res.status(200).send("user exists");
   }
   const newuser = new User({
     email,
