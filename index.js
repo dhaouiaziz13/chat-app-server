@@ -18,7 +18,7 @@ console.log('connected')
 })
 //-------------------auth routes-----------------------
 app.use('/auth',require('./routes/main'))
-
+app.use('/chat',require('./routes/chat'))
 //--------------test route------------------
 app.get("/", (req, res) => {
   res.send("yooo");
