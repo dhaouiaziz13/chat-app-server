@@ -3,8 +3,6 @@ const joi = require("joi");
 
 const messageformat = joi.object({
   body: joi.string().required(),
-  sendername: joi.string().required(),
-  receivername: joi.string().required(),
   senderid: joi.string().required(),
   receiverid: joi.string().required(),
 });
@@ -15,19 +13,28 @@ exports.Send = async (req, res) => {
   if (validation.error) {
     return res.send(validation.error.details[0].message);
   }
+
+  const { body, senderid, receiverid } = req.body;
+  const conv = await Message.findOne({ $and: [{ senderid }, { receiverid }] });
+  // console.log(conv)
+  if (conv) {
+    conv.messages = [...conv.messages, body];
+    conv
+      .save()
+      .then((res) => console.log("updated"))
+      .catch((err) => console.log(err));
+    return res.status(200).send('updated');
+  }
   try {
-    const { body, sendername, receivername, senderid, receiverid } = req.body;
+    // console.log(body)
     const messagetosend = new Message({
-      body,
-      sendername,
-      receivername,
+      messages: body,
       senderid,
       receiverid,
     });
     messagetosend
       .save()
       .then(() => {
-        console.log("saved");
         return res.status(200).send("sent");
       })
       .catch((e) => {
