@@ -22,13 +22,14 @@ const SignUpSchema = Joi.object({
 exports.Login = async (req, res) => {
   const validation = LoginSchema.validate(req.body);
   if (validation.error) {
+    
     return res.send(validation.error.details[0].message);
   }
   //--jwt auth--
   const { email, password } = req.body;
   const checkuser = await User.findOne({ email });
   if (!checkuser) {
-    return res.status(404).send("user not found");
+    return res.send("user not found");
   }
   const checksession = await Session.findOne({ email });
   if (checksession) {
